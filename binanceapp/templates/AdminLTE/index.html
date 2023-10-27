@@ -1,0 +1,254 @@
+{% extends "AdminLTE/base.html" %}
+{% load static %}
+{% block title %} Index {% endblock %}
+{% block navIndex %}active{% endblock %}
+{% block main %}
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        {% comment %} {% if simbolos %}
+        <!-- Info boxes -->
+          
+          <div class="card card-success collapsed-card">
+            collapsed-card
+            
+          
+            <div class="card-header">
+              <h3 class="card-title">Verificar Moedas</h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="card-refresh" data-source="widgets.html" data-source-selector="#card-refresh-content" data-load-on-init="false">
+                  <i class="fas fa-sync-alt"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="maximize">
+                  <i class="fas fa-expand"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <!-- /.card-tools -->
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+            
+              <form action="verificar.html" method="POST" class="row"> {% csrf_token %}
+                <div class="col-12 col-sm-6 col-md-3" onclick="selecionarTodos()">
+                  <button type="button" class="btn btn-block btn-info btn-sm">Todos</button>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3" onclick="selecionarNenhum()">
+                  <button type="button" class="btn btn-block btn-danger btn-sm">Nenhum</button>
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-3" onclick="verificar()">
+                  <button type="submit" class="btn btn-block btn-success btn-sm">Verificar</button>
+                </div>
+                <input type="hidden" name="enviarSimbolos" value="">
+              </form>
+              
+            
+              <div class="row">
+                <script>
+                  let simbolos = [];
+                  let simbolosBackup = [];
+                </script>
+                
+                  
+                {% for simbolo in simbolos %}
+                
+                <div class="col-12 col-sm-6 col-md-3" onclick="simboloBotaoToggle('{{simbolo}}')" style="cursor:pointer;">
+                  <div class="info-box">
+                    <span class="info-box-icon bg-info elevation-1" id='{{simbolo}}' name='onoff' >
+                      ON
+                      <script>
+                        simbolos.push('{{simbolo}}');
+                        simbolosBackup.push('{{simbolo}}');
+                      </script>
+                    </span>
+                    <div class="info-box-content">
+                      <span class="info-box-text">{{ simbolo }}</span>
+                      {% comment %} <span class="info-box-number">
+                        <a href="{% url 'index' %}">Verify
+                          <small>{{ simbolo }}</small>
+                        </a>
+                      </span>
+                    </div>
+                    <!-- /.info-box-content -->
+                  </div>
+                  <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+                {% endfor %}
+              </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.card-body -->            
+          </div>
+          <!-- /.card -->
+
+            
+          
+          
+          <!-- fix for small devices only -->
+          <div class="clearfix hidden-md-up"></div>
+
+        
+        {% endif %} {% endcomment %}
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">Monthly Recap Report</h5>
+
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
+                      <i class="fas fa-wrench"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" role="menu">
+                      <a href="#" class="dropdown-item">Action</a>
+                      <a href="#" class="dropdown-item">Another action</a>
+                      <a href="#" class="dropdown-item">Something else here</a>
+                      <a class="dropdown-divider"></a>
+                      <a href="#" class="dropdown-item">Separated link</a>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-8">
+                    <p class="text-center">
+                      <strong>Gráfico de Velas para {{ simboloGrafico }}</strong>
+                    </p>
+
+                    <div class="chart" id="chart">
+                    </div>
+                    <!-- /.chart -->
+                  </div>
+                  <!-- /.col -->
+                  <div class="col-md-4">
+                    <div class="card card-primary">
+                      <div class="card-header">
+                        <h3 class="card-title">Filtros</h3>
+                      </div>
+                      <!-- /.card-header -->
+                      <!-- form start -->
+                      <form action="{% url 'index' %}" method='POST'>
+                        {% csrf_token %}
+                        <div class="card-body">
+                          {% if simbolos %}
+                          <div class="form-group">
+                            <label for="simbolo">Par</label>
+                            <select class="form-control select2" style="width: 100%;" name="par">
+                              <option selected="selected" value='{{ simboloGrafico }}'>{{ simboloGrafico }}</option>
+                              {% for simbolo in simbolos %}
+                                <option value='{{ simbolo }}'>{{ simbolo }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          {% endif %}
+                          {% if intervalos %}
+                          <div class="form-group">
+                            <label for="intervalo">Intervalo</label>
+                            <select class="form-control select2" style="width: 100%;" name="intervalo">
+                              <option selected="selected" value='{{ intervaloGrafico.value }}'>{{ intervaloGrafico.name }}</option>
+                              {% for intervalo in intervalos %}
+                                <option value='{{ intervalo.value }}'>{{ intervalo.name }}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                          {% endif %}
+                          <div class="form-group">
+                            <label for="velas">Velas</label>
+                            <input type="text" class="form-control" id="velas" name='velas' placeholder="Quantidade de Velas" value='{{ velas }}'>
+                          </div>
+                          <div row>
+                            <div class="form-group">
+                              <label for="media">Média</label>
+                              <div class="col-md-12">
+                                <input type="text" class="form-control" id="media" name='media' placeholder="Média" value="{{ medias.0 }}">
+                              </div>
+                            </div>
+                            {% comment %} <div class="form-group">
+                              <label for="media2">a</label>
+                              <div class="col-md-12">
+                                <input type="text" class="form-control" id="media2" name='media2' placeholder="Média" value="{{ medias.1 }}">
+                              </div> {% endcomment %}
+                          </div>
+                        
+
+                          
+                          {% comment %} <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="teste" name='teste'>
+                            <label class="form-check-label" for="teste">Usar testnet?</label>
+                          </div> {% endcomment %}
+                        </div>
+                        <!-- /.card-body -->
+
+                        <div class="form-group">
+                          <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                        
+                      </form>
+                    </div>
+                    <!-- /.card -->
+                  </div>
+                  <!-- /.col-md-4-->
+                </div>
+                <!-- /.row -->
+              </div>
+              <!-- ./card-body -->
+              {% comment %} <div class="card-footer">
+                <div class="row">
+                  {% if porcentagens %}
+                  {% for porcentagem in porcentagens %}
+                    <div class="col-sm-3 col-6">
+                      <div class="description-block border-right">
+                        {% if porcentagem.1 > 120 %}
+                        <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 
+                        {% else %}
+                          {% if porcentagem.1 < 100 %}
+                            <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i>     
+                          {% else %}
+                            <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i>
+                          {% endif %}
+                        {% endif %}
+                          {{ porcentagem.3 }}</span>
+                        <h5 class="description-header">Média {{ porcentagem.0 }}</h5>
+                        <span class="description-text">{{ porcentagem.2 }}</span>
+                      </div>
+                      <!-- /.description-block -->
+                    </div>
+                    <!-- /.col -->
+                    {% endfor %}
+                  {% endif %}
+                  
+                </div>
+                <!-- /.row -->
+              </div> {% endcomment %}
+              <!-- /.card-footer -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+
+       
+        <!-- /.row -->
+      </div><!--/. container-fluid -->
+    </section>
+    <!-- /.content -->
+    {% endblock %}

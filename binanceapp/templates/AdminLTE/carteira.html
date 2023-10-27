@@ -1,0 +1,264 @@
+{% extends "AdminLTE/base.html" %}
+{% load static %}
+{% block title %}Carteira{% endblock %}
+{% block carteiraIndex %}active{% endblock %}
+{% block main %}
+    <!-- Main content -->
+    <section class="content">
+
+      <!-- SPOT box -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">SPOT</h3>
+
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        {% if carteira %}
+        <div class="card-body p-0">
+          <table class="table table-striped projects">
+              <thead>
+                  <tr>
+                      <th>
+                          #
+                      </th>
+                      <th>
+                          Moeda
+                      </th>
+                      
+                      <th>
+                          Disponível
+                      </th>
+                     
+                      <th>
+                        Valor em BRL
+                      </th>
+                      <th>
+                          Bloqueado
+                      </th>
+                      
+                      <th>
+                        Porcentagem
+                      </th>
+                      <th>
+                      </th>
+                  </tr>
+              </thead>
+              <tbody>
+                {% for moeda in carteira %}
+                  <tr>
+                      <td>
+                          {{  moeda.index }}
+                      </td>
+                      <td>
+                          <a>
+                              {{ moeda.asset }}
+                          </a>
+                          <br/>
+                          <small>
+                              Last bid: R$ {{moeda.bids}}
+                              <br/>
+                              Last ask: R$ {{moeda.asks}}
+                          </small>
+                      </td>
+                      
+                      <td>
+                        {{ moeda.free }}
+                      </td>
+                      
+                      <td>
+                        {% comment %} <span class="badge badge-success">Success</span> {% endcomment %}
+                        R$ {{ moeda.brlValuation }}
+                      </td>
+                      <td>
+                        {{ moeda.locked }}
+                          {% comment %} <ul class="list-inline">
+                              <li class="list-inline-item">
+                                  <img alt="Avatar" class="table-avatar" src="../../dist/img/avatar.png">
+                              </li>
+                              <li class="list-inline-item">
+                                  <img alt="Avatar" class="table-avatar" src="../../dist/img/avatar2.png">
+                              </li>
+                              <li class="list-inline-item">
+                                  <img alt="Avatar" class="table-avatar" src="../../dist/img/avatar3.png">
+                              </li>
+                              <li class="list-inline-item">
+                                  <img alt="Avatar" class="table-avatar" src="../../dist/img/avatar4.png">
+                              </li>
+                          </ul> {% endcomment %}
+                      </td>
+                     
+                      <td>
+                        <div class="progress progress-sm">
+                            <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{moeda.porcentagem}}" aria-valuemin="0" aria-valuemax="100" style="width: {{moeda.porcentagem}}%">
+                            </div>
+                        </div>
+                        <small>
+                          {{moeda.porcentagem}}% da carteira
+                        </small>
+                      </td>
+                      <td class="project-actions text-right">
+
+
+                        <form action="{% url 'index' %}" method='POST'>
+                          {% csrf_token %}
+                          <input type="hidden" class="form-control" id="par" name='par' value="{{ moeda.asset }}BRL">
+                        
+                          <input type='submit' class="btn btn-primary btn-sm" value='Ver'>
+
+                          </form>
+                          {% comment %} <a class="btn btn-info btn-sm" href="#">
+                              <i class="fas fa-pencil-alt">
+                              </i>
+                              Buy
+                          </a>
+                          <a class="btn btn-danger btn-sm" href="#">
+                              <i class="fas fa-trash">
+                              </i>
+                              Sell
+                          </a> {% endcomment %}
+                      </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+          </table>
+        </div>
+        {% endif %}
+        <!-- /.card-body -->
+      </div>
+      <!-- /.card -->
+
+
+      <!-- History box -->
+      {% comment %} <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">HISTORICO</h3>
+
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        {% if carteira %}
+        <div class="card-body p-0">
+          <table class="table table-striped projects">
+              <thead>
+                  <tr>
+                      <th>
+                          #
+                      </th>
+                      <th>
+                          Moeda
+                      </th>
+                      
+                      <th>
+                          Disponível
+                      </th>
+                     
+                      <th>
+                        Valor em BRL
+                      </th>
+                      <th>
+                          Bloqueado
+                      </th>
+                      
+                      <th>
+                        Porcentagem
+                      </th>
+                      <th>
+                      </th>
+                  </tr>
+              </thead>
+              <tbody>
+                {% for moeda in carteira %}
+                  <tr>
+                      <td>
+                          {{  moeda.index }}
+                      </td>
+                      <td>
+                          <a>
+                              {{ moeda.asset }}
+                          </a>
+                          <br/>
+                          <small>
+                              Last bid: R$ {{moeda.bids}}
+                              <br/>
+                              Last ask: R$ {{moeda.asks}}
+                          </small>
+                      </td>
+                      
+                      <td>
+                        {{ moeda.free }}
+                      </td>
+                      
+                      <td>
+                        {% comment %} <span class="badge badge-success">Success</span>
+                        R$ {{ moeda.brlValuation }}
+                      </td>
+                      <td>
+                        {{ moeda.locked }}
+                          <ul class="list-inline">
+                              <li class="list-inline-item">
+                                  <img alt="Avatar" class="table-avatar" src="../../dist/img/avatar.png">
+                              </li>
+                              <li class="list-inline-item">
+                                  <img alt="Avatar" class="table-avatar" src="../../dist/img/avatar2.png">
+                              </li>
+                              <li class="list-inline-item">
+                                  <img alt="Avatar" class="table-avatar" src="../../dist/img/avatar3.png">
+                              </li>
+                              <li class="list-inline-item">
+                                  <img alt="Avatar" class="table-avatar" src="../../dist/img/avatar4.png">
+                              </li>
+                          </ul> 
+                      </td>
+                     
+                      <td>
+                        <div class="progress progress-sm">
+                            <div class="progress-bar bg-green" role="progressbar" aria-valuenow="{{moeda.porcentagem}}" aria-valuemin="0" aria-valuemax="100" style="width: {{moeda.porcentagem}}%">
+                            </div>
+                        </div>
+                        <small>
+                          {{moeda.porcentagem}}% da carteira
+                        </small>
+                      </td>
+                      <td class="project-actions text-right">
+                          <a class="btn btn-primary btn-sm" href="#">
+                              <i class="fas fa-folder">
+                              </i>
+                              View
+                          </a>
+                          <a class="btn btn-info btn-sm" href="#">
+                              <i class="fas fa-pencil-alt">
+                              </i>
+                              Buy
+                          </a>
+                          <a class="btn btn-danger btn-sm" href="#">
+                              <i class="fas fa-trash">
+                              </i>
+                              Sell
+                          </a>
+                      </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+          </table>
+        </div>
+        {% endif %}
+        <!-- /.card-body -->
+      </div> {% endcomment %}
+      <!-- /.card -->
+
+    </section>
+    <!-- /.content -->
+    {% endblock %}
